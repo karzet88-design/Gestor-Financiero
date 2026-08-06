@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Ingresos y Gastos</title>
-    <!-- Agrega esta línea si no la tienes -->
     <link rel="manifest" href="./manifest.json">
+    <title>Gestor de Ingresos y Gastos</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -325,7 +324,7 @@
     <div id="welcome-screen">
         <h1>Control Financiero</h1>
         <p>Gestiona tus ingresos y gastos de forma simple y minimalista.</p>
-        <button id="btn-nuevo-gestor">Nuevo Gestor</button>
+        <button id="btn-nuevo-gestor">Entrar al Gestor</button>
     </div>
 
     <!-- Pantalla 2: Interfaz Principal del Gestor -->
@@ -369,8 +368,8 @@
     </div>
 
     <script>
-        // Estado de la aplicación
-        let mesesData = [];
+        // Cargar datos guardados previamente en el celular (si existen)
+        let mesesData = JSON.parse(localStorage.getItem('mesesData_finanzas')) || [];
 
         // Elementos del DOM
         const welcomeScreen = document.getElementById('welcome-screen');
@@ -383,21 +382,33 @@
         const selectMes = document.getElementById('select-mes');
         const monthsContainer = document.getElementById('months-container');
 
+        // Si ya hay datos guardados, salta directo a la pantalla principal al abrir la app
+        if (mesesData.length > 0) {
+            welcomeScreen.style.display = 'none';
+            appScreen.style.display = 'block';
+            renderizarMeses();
+        }
+
         // Transición de bienvenida a la pestaña principal
         btnNuevoGestor.addEventListener('click', () => {
             welcomeScreen.style.display = 'none';
             appScreen.style.display = 'block';
+            renderizarMeses();
         });
 
         // Controles del Modal
         btnAbrirModal.addEventListener('click', () => modalOverlay.style.display = 'flex');
         btnCerrarModal.addEventListener('click', () => modalOverlay.style.display = 'none');
 
+        // Función para guardar los datos en la memoria del celular
+        function guardarEnMemoria() {
+            localStorage.setItem('mesesData_finanzas', JSON.stringify(mesesData));
+        }
+
         // Agregar nuevo mes
         btnGuardarMes.addEventListener('click', () => {
             const nombreMes = selectMes.value;
             
-            // Verificar si el mes ya existe
             if (mesesData.some(m => m.nombre === nombreMes)) {
                 alert('Este mes ya ha sido agregado.');
                 return;
@@ -410,6 +421,7 @@
                 gastos: []
             });
 
+            guardarEnMemoria();
             modalOverlay.style.display = 'none';
             renderizarMeses();
         });
@@ -432,6 +444,7 @@
             const mes = mesesData.find(m => m.id === idMes);
             if (mes) {
                 mes[tipo].push({ concepto, fecha, monto });
+                guardarEnMemoria();
                 conceptoInput.value = '';
                 fechaInput.value = '';
                 montoInput.value = '';
@@ -444,6 +457,15 @@
             const mes = mesesData.find(m => m.id === idMes);
             if (mes) {
                 mes[tipo].splice(index, 1);
+                guardarEnMemoria();
+                renderizarMeses();
+            }
+        }
+
+        function eliminarMes(idMes) {
+            if (confirm('¿Estás seguro de eliminar este mes completo?')) {
+                mesesData = mesesData.filter(m => m.id !== idMes);
+                guardarEnMemoria();
                 renderizarMeses();
             }
         }
@@ -458,7 +480,6 @@
             monthsContainer.innerHTML = '';
 
             mesesData.forEach(mes => {
-                // Calcular totales
                 const totalIngresos = mes.ingresos.reduce((acc, item) => acc + item.monto, 0);
                 const totalGastos = mes.gastos.reduce((acc, item) => acc + item.monto, 0);
                 const restante = totalIngresos - totalGastos;
@@ -472,7 +493,6 @@
                         <button class="btn-danger" onclick="eliminarMes(${mes.id})">Eliminar Mes</button>
                     </div>
 
-                    <!-- Tabla Resumen -->
                     <div class="summary-grid">
                         <div class="summary-item">
                             <label>Total Ingresos</label>
@@ -488,7 +508,6 @@
                         </div>
                     </div>
 
-                    <!-- Secciones de Ingresos y Gastos -->
                     <div class="sections-container">
                         <!-- Sección Ingresos -->
                         <div class="sub-section">
@@ -561,11 +580,6 @@
                 `;
                 monthsContainer.appendChild(card);
             });
-        }
-
-        function eliminarMes(idMes) {
-            mesesData = mesesData.filter(m => m.id !== idMes);
-            renderizarMeses();
         }
     </script>
 </body>

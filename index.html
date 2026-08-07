@@ -131,7 +131,6 @@
             background-color: #702f2f;
         }
 
-        /* NUEVA CLASE PARA BOTONES COMPACTOS EN MÓVIL */
         .btn-compact {
             padding: 5px 10px;
             font-size: 0.75rem;
@@ -154,8 +153,15 @@
             margin-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
-            flex-wrap: wrap; /* Permite que bajen si no caben */
+            flex-wrap: wrap;
             gap: 10px;
+        }
+
+        /* Cuando está minimizado, removemos el margen inferior del header para que la tarjeta sea compacta */
+        .year-card.minimized .year-header {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
         }
 
         .year-title {
@@ -168,6 +174,11 @@
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
+        }
+
+        /* Clase para ocultar los meses */
+        .months-list.hidden {
+            display: none;
         }
 
         /* Tarjeta de Mes */
@@ -447,7 +458,6 @@
     </div>
 
     <script>
-        // Cargar datos y usuario guardados
         let usuarioData = localStorage.getItem('nombreUsuario_finanzas') || '';
         let anosData = JSON.parse(localStorage.getItem('anosData_finanzas')) || [];
         let anioSeleccionadoId = null;
@@ -459,7 +469,6 @@
         const headerTitle = document.getElementById('header-title');
         const yearsContainer = document.getElementById('years-container');
 
-        // Modales
         const modalAnio = document.getElementById('modal-anio');
         const btnAbrirModalAnio = document.getElementById('btn-abrir-modal-anio');
         const cancelarAnio = document.getElementById('cancelar-anio');
@@ -478,7 +487,6 @@
         const resumenGastos = document.getElementById('resumen-gastos');
         const resumenNeto = document.getElementById('resumen-neto');
 
-        // Si ya hay usuario guardado, cargar directamente
         if (usuarioData) {
             welcomeScreen.style.display = 'none';
             appScreen.style.display = 'block';
@@ -504,7 +512,6 @@
             localStorage.setItem('anosData_finanzas', JSON.stringify(anosData));
         }
 
-        // Controles modal Año
         btnAbrirModalAnio.addEventListener('click', () => {
             inputNombreAnio.value = '';
             modalAnio.style.display = 'flex';
@@ -520,6 +527,7 @@
             anosData.push({
                 id: Date.now(),
                 nombre: nombreAnio,
+                minimizado: false, // Propiedad para controlar el estado colapsado
                 meses: []
             });
             guardarEnMemoria();
@@ -527,7 +535,6 @@
             renderizarApp();
         });
 
-        // Controles modal Mes
         function abrirModalMes(idAnio) {
             anioSeleccionadoId = idAnio;
             modalMes.style.display = 'flex';
@@ -558,6 +565,15 @@
         function eliminarAnio(idAnio) {
             if (confirm('¿Eliminar este registro anual completo?')) {
                 anosData = anosData.filter(a => a.id !== idAnio);
+                guardarEnMemoria();
+                renderizarApp();
+            }
+        }
+
+        function toggleMinimizarAnio(idAnio) {
+            const anio = anosData.find(a => a.id === idAnio);
+            if (anio) {
+                anio.minimizado = !anio.minimizado;
                 guardarEnMemoria();
                 renderizarApp();
             }
@@ -606,7 +622,6 @@
             renderizarApp();
         }
 
-        // Generar Resumen del Año
         function generarResumenAnio(idAnio) {
             const anio = anosData.find(a => a.id === idAnio);
             let totalIngresosAnual = 0;
@@ -630,7 +645,6 @@
 
         cerrarResumen.addEventListener('click', () => modalResumen.style.display = 'none');
 
-        // Renderizado Completo
         function renderizarApp() {
             if (anosData.length === 0) {
                 yearsContainer.innerHTML = `<div id="no-years" class="empty-state" style="padding: 40px;">No hay registros creados. Da clic en "+ Nuevo Registro" para comenzar.</div>`;
@@ -641,7 +655,8 @@
 
             anosData.forEach(anio => {
                 const yearCard = document.createElement('div');
-                yearCard.className = 'year-card';
+                // Añadimos la clase 'minimized' condicionalmente
+                yearCard.className = `year-card ${anio.minimizado ? 'minimized' : ''}`;
 
                 let mesesHTML = '';
                 if (anio.meses.length === 0) {
@@ -752,12 +767,13 @@
                     <div class="year-header">
                         <span class="year-title">${anio.nombre}</span>
                         <div class="year-actions">
+                            <button class="btn-secondary btn-inline btn-compact" onclick="toggleMinimizarAnio(${anio.id})">${anio.minimizado ? 'Expandir' : 'Minimizar'}</button>
                             <button class="btn-secondary btn-inline btn-compact" onclick="generarResumenAnio(${anio.id})">Resumen</button>
                             <button class="btn-secondary btn-inline btn-compact" onclick="abrirModalMes(${anio.id})">+ Mes</button>
                             <button class="btn-danger btn-compact" onclick="eliminarAnio(${anio.id})">Eliminar</button>
                         </div>
                     </div>
-                    <div class="months-list">
+                    <div class="months-list ${anio.minimizado ? 'hidden' : ''}">
                         ${mesesHTML}
                     </div>
                 `;

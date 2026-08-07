@@ -131,6 +131,12 @@
             background-color: #702f2f;
         }
 
+        /* NUEVA CLASE PARA BOTONES COMPACTOS EN MÓVIL */
+        .btn-compact {
+            padding: 5px 10px;
+            font-size: 0.75rem;
+        }
+
         /* Contenedor de Años (Registros Anuales) */
         .year-card {
             background-color: var(--card-bg);
@@ -148,6 +154,8 @@
             margin-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
+            flex-wrap: wrap; /* Permite que bajen si no caben */
+            gap: 10px;
         }
 
         .year-title {
@@ -158,7 +166,8 @@
 
         .year-actions {
             display: flex;
-            gap: 10px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         /* Tarjeta de Mes */
@@ -647,7 +656,7 @@
                             <div class="month-card">
                                 <div class="month-header">
                                     <span class="month-title">${mes.nombre}</span>
-                                    <button class="btn-danger" onclick="eliminarMes(${anio.id}, ${mes.id})">Eliminar Mes</button>
+                                    <button class="btn-danger btn-compact" onclick="eliminarMes(${anio.id}, ${mes.id})">Eliminar Mes</button>
                                 </div>
 
                                 <div class="summary-grid">
@@ -743,9 +752,9 @@
                     <div class="year-header">
                         <span class="year-title">${anio.nombre}</span>
                         <div class="year-actions">
-                            <button class="btn-secondary btn-inline" onclick="generarResumenAnio(${anio.id})">Generar resumen de año</button>
-                            <button class="btn-secondary btn-inline" onclick="abrirModalMes(${anio.id})">+ Agregar Mes</button>
-                            <button class="btn-danger" onclick="eliminarAnio(${anio.id})">Eliminar Registro</button>
+                            <button class="btn-secondary btn-inline btn-compact" onclick="generarResumenAnio(${anio.id})">Resumen</button>
+                            <button class="btn-secondary btn-inline btn-compact" onclick="abrirModalMes(${anio.id})">+ Mes</button>
+                            <button class="btn-danger btn-compact" onclick="eliminarAnio(${anio.id})">Eliminar</button>
                         </div>
                     </div>
                     <div class="months-list">

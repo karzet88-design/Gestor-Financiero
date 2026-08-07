@@ -36,9 +36,11 @@
             padding: 20px;
         }
 
-        /* Pantalla de Bienvenida */
+        /* Pantalla de Bienvenida con Usuario */
         #welcome-screen {
             text-align: center;
+            max-width: 360px;
+            width: 100%;
         }
 
         #welcome-screen h1 {
@@ -53,6 +55,13 @@
             color: var(--text-muted);
             margin-bottom: 24px;
             font-size: 0.95rem;
+        }
+
+        #welcome-screen input {
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 0.95rem;
+            padding: 10px;
         }
 
         /* Pantalla Principal (Oculta al inicio) */
@@ -89,10 +98,15 @@
             border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s ease;
+            width: 100%;
         }
 
         button:hover, .btn:hover {
             background-color: var(--accent-hover);
+        }
+
+        .btn-inline {
+            width: auto;
         }
 
         .btn-secondary {
@@ -110,33 +124,63 @@
             color: #ff8080;
             padding: 6px 12px;
             font-size: 0.8rem;
+            width: auto;
         }
 
         .btn-danger:hover {
             background-color: #702f2f;
         }
 
-        /* Tarjeta de Mes */
-        .month-card {
+        /* Contenedor de Años (Registros Anuales) */
+        .year-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 24px;
-            margin-bottom: 24px;
+            margin-bottom: 30px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .year-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .year-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .year-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Tarjeta de Mes */
+        .month-card {
+            background-color: #161616;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         .month-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         .month-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             text-transform: capitalize;
             color: #ffffff;
@@ -147,8 +191,8 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 15px;
-            margin-bottom: 24px;
-            background: #161616;
+            margin-bottom: 20px;
+            background: #121212;
             padding: 15px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
@@ -168,13 +212,8 @@
             font-weight: 500;
         }
 
-        .negative {
-            color: var(--danger);
-        }
-
-        .positive {
-            color: var(--success);
-        }
+        .negative { color: var(--danger); }
+        .positive { color: var(--success); }
 
         /* Secciones de Tablas (Ingresos y Gastos) */
         .sections-container {
@@ -190,10 +229,6 @@
             }
         }
 
-        .sub-section {
-            min-width: 0;
-        }
-
         .sub-section h4 {
             font-size: 0.9rem;
             font-weight: 500;
@@ -201,7 +236,6 @@
             color: var(--text-main);
         }
 
-        /* Formularios internos compactos */
         .inline-form {
             display: flex;
             gap: 6px;
@@ -230,11 +264,11 @@
         .inline-form button {
             padding: 7px 12px;
             font-size: 0.85rem;
+            width: auto;
         }
 
-        /* Tablas amplias y con scroll interno si crecen mucho */
         .table-container {
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -249,7 +283,7 @@
         }
 
         th {
-            background-color: #161616;
+            background-color: #121212;
             position: sticky;
             top: 0;
             font-weight: 500;
@@ -269,10 +303,6 @@
         th:nth-child(3), td:nth-child(3) { width: 20%; }
         th:nth-child(4), td:nth-child(4) { width: 8%; text-align: center; }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
         .empty-state {
             text-align: center;
             color: var(--text-muted);
@@ -280,14 +310,15 @@
             font-size: 0.8rem;
         }
 
-        /* Modal para agregar mes */
-        #modal-overlay {
+        /* Modales */
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7);
             align-items: center;
             justify-content: center;
+            z-index: 100;
         }
 
         .modal {
@@ -306,8 +337,7 @@
             color: #ffffff;
         }
 
-        .modal select {
-            width: 100%;
+        .modal input, .modal select {
             margin-bottom: 15px;
         }
 
@@ -316,34 +346,50 @@
             justify-content: flex-end;
             gap: 8px;
         }
+        
+        .modal-actions button {
+            width: auto;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Pantalla 1: Único Botón Inicial -->
+    <!-- Pantalla 1: Ingreso de Usuario -->
     <div id="welcome-screen">
         <h1>Control Financiero</h1>
-        <p>Gestiona tus ingresos y gastos de forma simple y minimalista.</p>
-        <button id="btn-nuevo-gestor">Entrar al Gestor</button>
+        <p>Ingresa tu nombre para comenzar a gestionar tus finanzas.</p>
+        <input type="text" id="input-nombre-usuario" placeholder="Tu Nombre">
+        <button id="btn-entrar">Entrar al Gestor</button>
     </div>
 
-    <!-- Pantalla 2: Interfaz Principal del Gestor -->
+    <!-- Pantalla 2: Interfaz Principal -->
     <div id="app-screen">
         <header>
-            <h2>Gestor Financiero</h2>
-            <button class="btn-secondary" id="btn-abrir-modal">+ Agregar Mes</button>
+            <h2 id="header-title">Finanzas de Usuario</h2>
+            <button class="btn-inline" id="btn-abrir-modal-anio">+ Nuevo Registro</button>
         </header>
 
-        <!-- Contenedor donde se van listando los meses -->
-        <div id="months-container">
-            <div id="no-months" class="empty-state" style="padding: 40px;">
-                No hay meses agregados. Da clic en "+ Agregar Mes" para comenzar.
+        <div id="years-container">
+            <div id="no-years" class="empty-state" style="padding: 40px;">
+                No hay registros creados. Da clic en "+ Nuevo Registro" para comenzar.
             </div>
         </div>
     </div>
 
-    <!-- Modal para seleccionar el mes a agregar -->
-    <div id="modal-overlay">
+    <!-- Modal para Nuevo Registro (Año) -->
+    <div id="modal-anio" class="modal-overlay">
+        <div class="modal">
+            <h3>Nuevo Registro Anual</h3>
+            <input type="text" id="input-nombre-anio" placeholder="Ej. Año 2026 o Proyecto X">
+            <div class="modal-actions">
+                <button class="btn-secondary btn-inline" id="cancelar-anio">Cancelar</button>
+                <button class="btn-inline" id="guardar-anio">Crear</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Mes -->
+    <div id="modal-mes" class="modal-overlay">
         <div class="modal">
             <h3>Seleccionar Mes</h3>
             <select id="select-mes">
@@ -361,60 +407,134 @@
                 <option value="Diciembre">Diciembre</option>
             </select>
             <div class="modal-actions">
-                <button class="btn-secondary" id="btn-cerrar-modal">Cancelar</button>
-                <button id="btn-guardar-mes">Agregar</button>
+                <button class="btn-secondary btn-inline" id="cancelar-mes">Cancelar</button>
+                <button class="btn-inline" id="guardar-mes">Agregar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Resumen de Año -->
+    <div id="modal-resumen" class="modal-overlay">
+        <div class="modal" style="max-width: 380px;">
+            <h3 id="resumen-titulo-modal">Resumen Anual</h3>
+            <div class="summary-grid" style="margin-bottom: 20px;">
+                <div class="summary-item">
+                    <label>Ingresos Totales</label>
+                    <span id="resumen-ingresos" class="positive">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <label>Gastos Totales</label>
+                    <span id="resumen-gastos" class="negative">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <label>Balance Neto Anual</label>
+                    <span id="resumen-neto">$0.00</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-inline" id="cerrar-resumen">Cerrar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Cargar datos guardados previamente en el celular (si existen)
-        let mesesData = JSON.parse(localStorage.getItem('mesesData_finanzas')) || [];
+        // Cargar datos y usuario guardados
+        let usuarioData = localStorage.getItem('nombreUsuario_finanzas') || '';
+        let anosData = JSON.parse(localStorage.getItem('anosData_finanzas')) || [];
+        let anioSeleccionadoId = null;
 
-        // Elementos del DOM
         const welcomeScreen = document.getElementById('welcome-screen');
         const appScreen = document.getElementById('app-screen');
-        const btnNuevoGestor = document.getElementById('btn-nuevo-gestor');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const btnAbrirModal = document.getElementById('btn-abrir-modal');
-        const btnCerrarModal = document.getElementById('btn-cerrar-modal');
-        const btnGuardarMes = document.getElementById('btn-guardar-mes');
-        const selectMes = document.getElementById('select-mes');
-        const monthsContainer = document.getElementById('months-container');
+        const inputNombreUsuario = document.getElementById('input-nombre-usuario');
+        const btnEntrar = document.getElementById('btn-entrar');
+        const headerTitle = document.getElementById('header-title');
+        const yearsContainer = document.getElementById('years-container');
 
-        // Si ya hay datos guardados, salta directo a la pantalla principal al abrir la app
-        if (mesesData.length > 0) {
+        // Modales
+        const modalAnio = document.getElementById('modal-anio');
+        const btnAbrirModalAnio = document.getElementById('btn-abrir-modal-anio');
+        const cancelarAnio = document.getElementById('cancelar-anio');
+        const guardarAnio = document.getElementById('guardar-anio');
+        const inputNombreAnio = document.getElementById('input-nombre-anio');
+
+        const modalMes = document.getElementById('modal-mes');
+        const cancelarMes = document.getElementById('cancelar-mes');
+        const guardarMes = document.getElementById('guardar-mes');
+        const selectMes = document.getElementById('select-mes');
+
+        const modalResumen = document.getElementById('modal-resumen');
+        const cerrarResumen = document.getElementById('cerrar-resumen');
+        const resumenTituloModal = document.getElementById('resumen-titulo-modal');
+        const resumenIngresos = document.getElementById('resumen-ingresos');
+        const resumenGastos = document.getElementById('resumen-gastos');
+        const resumenNeto = document.getElementById('resumen-neto');
+
+        // Si ya hay usuario guardado, cargar directamente
+        if (usuarioData) {
             welcomeScreen.style.display = 'none';
             appScreen.style.display = 'block';
-            renderizarMeses();
+            headerTitle.textContent = `Finanzas de ${usuarioData}`;
+            renderizarApp();
         }
 
-        // Transición de bienvenida a la pestaña principal
-        btnNuevoGestor.addEventListener('click', () => {
+        btnEntrar.addEventListener('click', () => {
+            const nombre = inputNombreUsuario.value.trim();
+            if (!nombre) {
+                alert('Por favor ingresa tu nombre.');
+                return;
+            }
+            usuarioData = nombre;
+            localStorage.setItem('nombreUsuario_finanzas', usuarioData);
             welcomeScreen.style.display = 'none';
             appScreen.style.display = 'block';
-            renderizarMeses();
+            headerTitle.textContent = `Finanzas de ${usuarioData}`;
+            renderizarApp();
         });
 
-        // Controles del Modal
-        btnAbrirModal.addEventListener('click', () => modalOverlay.style.display = 'flex');
-        btnCerrarModal.addEventListener('click', () => modalOverlay.style.display = 'none');
-
-        // Función para guardar los datos en la memoria del celular
         function guardarEnMemoria() {
-            localStorage.setItem('mesesData_finanzas', JSON.stringify(mesesData));
+            localStorage.setItem('anosData_finanzas', JSON.stringify(anosData));
         }
 
-        // Agregar nuevo mes
-        btnGuardarMes.addEventListener('click', () => {
+        // Controles modal Año
+        btnAbrirModalAnio.addEventListener('click', () => {
+            inputNombreAnio.value = '';
+            modalAnio.style.display = 'flex';
+        });
+        cancelarAnio.addEventListener('click', () => modalAnio.style.display = 'none');
+
+        guardarAnio.addEventListener('click', () => {
+            const nombreAnio = inputNombreAnio.value.trim();
+            if (!nombreAnio) {
+                alert('Ingresa un nombre para el registro.');
+                return;
+            }
+            anosData.push({
+                id: Date.now(),
+                nombre: nombreAnio,
+                meses: []
+            });
+            guardarEnMemoria();
+            modalAnio.style.display = 'none';
+            renderizarApp();
+        });
+
+        // Controles modal Mes
+        function abrirModalMes(idAnio) {
+            anioSeleccionadoId = idAnio;
+            modalMes.style.display = 'flex';
+        }
+        cancelarMes.addEventListener('click', () => modalMes.style.display = 'none');
+
+        guardarMes.addEventListener('click', () => {
             const nombreMes = selectMes.value;
+            const anio = anosData.find(a => a.id === anioSeleccionadoId);
             
-            if (mesesData.some(m => m.nombre === nombreMes)) {
-                alert('Este mes ya ha sido agregado.');
+            if (anio.meses.some(m => m.nombre === nombreMes)) {
+                alert('Este mes ya existe en este registro.');
                 return;
             }
 
-            mesesData.push({
+            anio.meses.push({
                 id: Date.now(),
                 nombre: nombreMes,
                 ingresos: [],
@@ -422,12 +542,28 @@
             });
 
             guardarEnMemoria();
-            modalOverlay.style.display = 'none';
-            renderizarMeses();
+            modalMes.style.display = 'none';
+            renderizarApp();
         });
 
-        // Función para agregar un ingreso o gasto
-        function agregarMovimiento(idMes, tipo) {
+        function eliminarAnio(idAnio) {
+            if (confirm('¿Eliminar este registro anual completo?')) {
+                anosData = anosData.filter(a => a.id !== idAnio);
+                guardarEnMemoria();
+                renderizarApp();
+            }
+        }
+
+        function eliminarMes(idAnio, idMes) {
+            if (confirm('¿Estás seguro de eliminar este mes?')) {
+                const anio = anosData.find(a => a.id === idAnio);
+                anio.meses = anio.meses.filter(m => m.id !== idMes);
+                guardarEnMemoria();
+                renderizarApp();
+            }
+        }
+
+        function agregarMovimiento(idAnio, idMes, tipo) {
             const conceptoInput = document.getElementById(`${tipo}-concepto-${idMes}`);
             const fechaInput = document.getElementById(`${tipo}-fecha-${idMes}`);
             const montoInput = document.getElementById(`${tipo}-monto-${idMes}`);
@@ -437,148 +573,187 @@
             const monto = parseFloat(montoInput.value);
 
             if (!concepto || !fecha || isNaN(monto)) {
-                alert('Por favor completa todos los campos correctamente.');
+                alert('Completa todos los campos correctamente.');
                 return;
             }
 
-            const mes = mesesData.find(m => m.id === idMes);
-            if (mes) {
-                mes[tipo].push({ concepto, fecha, monto });
-                guardarEnMemoria();
-                conceptoInput.value = '';
-                fechaInput.value = '';
-                montoInput.value = '';
-                renderizarMeses();
-            }
+            const anio = anosData.find(a => a.id === idAnio);
+            const mes = anio.meses.find(m => m.id === idMes);
+            
+            mes[tipo].push({ concepto, fecha, monto });
+            guardarEnMemoria();
+            
+            conceptoInput.value = '';
+            fechaInput.value = '';
+            montoInput.value = '';
+            renderizarApp();
         }
 
-        // Función para eliminar un registro individual
-        function eliminarMovimiento(idMes, tipo, index) {
-            const mes = mesesData.find(m => m.id === idMes);
-            if (mes) {
-                mes[tipo].splice(index, 1);
-                guardarEnMemoria();
-                renderizarMeses();
-            }
+        function eliminarMovimiento(idAnio, idMes, tipo, index) {
+            const anio = anosData.find(a => a.id === idAnio);
+            const mes = anio.meses.find(m => m.id === idMes);
+            mes[tipo].splice(index, 1);
+            guardarEnMemoria();
+            renderizarApp();
         }
 
-        function eliminarMes(idMes) {
-            if (confirm('¿Estás seguro de eliminar este mes completo?')) {
-                mesesData = mesesData.filter(m => m.id !== idMes);
-                guardarEnMemoria();
-                renderizarMeses();
-            }
+        // Generar Resumen del Año
+        function generarResumenAnio(idAnio) {
+            const anio = anosData.find(a => a.id === idAnio);
+            let totalIngresosAnual = 0;
+            let totalGastosAnual = 0;
+
+            anio.meses.forEach(mes => {
+                totalIngresosAnual += mes.ingresos.reduce((acc, item) => acc + item.monto, 0);
+                totalGastosAnual += mes.gastos.reduce((acc, item) => acc + item.monto, 0);
+            });
+
+            const netoAnual = totalIngresosAnual - totalGastosAnual;
+
+            resumenTituloModal.textContent = `Resumen: ${anio.nombre}`;
+            resumenIngresos.textContent = `$${totalIngresosAnual.toFixed(2)}`;
+            resumenGastos.textContent = `$${totalGastosAnual.toFixed(2)}`;
+            resumenNeto.textContent = `$${netoAnual.toFixed(2)}`;
+            resumenNeto.className = netoAnual < 0 ? 'negative' : 'positive';
+
+            modalResumen.style.display = 'flex';
         }
 
-        // Renderizado general de la interfaz de meses
-        function renderizarMeses() {
-            if (mesesData.length === 0) {
-                monthsContainer.innerHTML = `<div id="no-months" class="empty-state" style="padding: 40px;">No hay meses agregados. Da clic en "+ Agregar Mes" para comenzar.</div>`;
+        cerrarResumen.addEventListener('click', () => modalResumen.style.display = 'none');
+
+        // Renderizado Completo
+        function renderizarApp() {
+            if (anosData.length === 0) {
+                yearsContainer.innerHTML = `<div id="no-years" class="empty-state" style="padding: 40px;">No hay registros creados. Da clic en "+ Nuevo Registro" para comenzar.</div>`;
                 return;
             }
 
-            monthsContainer.innerHTML = '';
+            yearsContainer.innerHTML = '';
 
-            mesesData.forEach(mes => {
-                const totalIngresos = mes.ingresos.reduce((acc, item) => acc + item.monto, 0);
-                const totalGastos = mes.gastos.reduce((acc, item) => acc + item.monto, 0);
-                const restante = totalIngresos - totalGastos;
+            anosData.forEach(anio => {
+                const yearCard = document.createElement('div');
+                yearCard.className = 'year-card';
 
-                const card = document.createElement('div');
-                card.className = 'month-card';
+                let mesesHTML = '';
+                if (anio.meses.length === 0) {
+                    mesesHTML = `<div class="empty-state">No hay meses agregados en este registro.</div>`;
+                } else {
+                    anio.meses.forEach(mes => {
+                        const totalIngresos = mes.ingresos.reduce((acc, item) => acc + item.monto, 0);
+                        const totalGastos = mes.gastos.reduce((acc, item) => acc + item.monto, 0);
+                        const restante = totalIngresos - totalGastos;
 
-                card.innerHTML = `
-                    <div class="month-header">
-                        <span class="month-title">${mes.nombre}</span>
-                        <button class="btn-danger" onclick="eliminarMes(${mes.id})">Eliminar Mes</button>
+                        mesesHTML += `
+                            <div class="month-card">
+                                <div class="month-header">
+                                    <span class="month-title">${mes.nombre}</span>
+                                    <button class="btn-danger" onclick="eliminarMes(${anio.id}, ${mes.id})">Eliminar Mes</button>
+                                </div>
+
+                                <div class="summary-grid">
+                                    <div class="summary-item">
+                                        <label>Ingresos</label>
+                                        <span class="positive">$${totalIngresos.toFixed(2)}</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <label>Gastos</label>
+                                        <span class="negative">$${totalGastos.toFixed(2)}</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <label>Restante Mes</label>
+                                        <span class="${restante < 0 ? 'negative' : 'positive'}">$${restante.toFixed(2)}</span>
+                                    </div>
+                                </div>
+
+                                <div class="sections-container">
+                                    <!-- Ingresos -->
+                                    <div class="sub-section">
+                                        <h4>Ingresos</h4>
+                                        <div class="inline-form">
+                                            <input type="text" id="ingresos-concepto-${mes.id}" class="input-concept" placeholder="Concepto">
+                                            <input type="date" id="ingresos-fecha-${mes.id}" class="input-date">
+                                            <input type="number" id="ingresos-monto-${mes.id}" class="input-amount" placeholder="Monto" step="0.01">
+                                            <button class="btn-inline" onclick="agregarMovimiento(${anio.id}, ${mes.id}, 'ingresos')">+</button>
+                                        </div>
+                                        <div class="table-container">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Concepto</th>
+                                                        <th>Fecha</th>
+                                                        <th>Monto</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${mes.ingresos.length === 0 ? `<tr><td colspan="4" class="empty-state">Sin ingresos</td></tr>` : 
+                                                        mes.ingresos.map((item, idx) => `
+                                                            <tr>
+                                                                <td>${item.concepto}</td>
+                                                                <td>${item.fecha}</td>
+                                                                <td>$${item.monto.toFixed(2)}</td>
+                                                                <td style="text-align: center;"><button class="btn-danger" style="padding:2px 5px; font-size:0.65rem;" onclick="eliminarMovimiento(${anio.id}, ${mes.id}, 'ingresos', ${idx})">X</button></td>
+                                                            </tr>
+                                                        `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Gastos -->
+                                    <div class="sub-section">
+                                        <h4>Gastos</h4>
+                                        <div class="inline-form">
+                                            <input type="text" id="gastos-concepto-${mes.id}" class="input-concept" placeholder="Concepto">
+                                            <input type="date" id="gastos-fecha-${mes.id}" class="input-date">
+                                            <input type="number" id="gastos-monto-${mes.id}" class="input-amount" placeholder="Monto" step="0.01">
+                                            <button class="btn-inline" onclick="agregarMovimiento(${anio.id}, ${mes.id}, 'gastos')">+</button>
+                                        </div>
+                                        <div class="table-container">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Concepto</th>
+                                                        <th>Fecha</th>
+                                                        <th>Monto</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${mes.gastos.length === 0 ? `<tr><td colspan="4" class="empty-state">Sin gastos</td></tr>` : 
+                                                        mes.gastos.map((item, idx) => `
+                                                            <tr>
+                                                                <td>${item.concepto}</td>
+                                                                <td>${item.fecha}</td>
+                                                                <td>$${item.monto.toFixed(2)}</td>
+                                                                <td style="text-align: center;"><button class="btn-danger" style="padding:2px 5px; font-size:0.65rem;" onclick="eliminarMovimiento(${anio.id}, ${mes.id}, 'gastos', ${idx})">X</button></td>
+                                                            </tr>
+                                                        `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                yearCard.innerHTML = `
+                    <div class="year-header">
+                        <span class="year-title">${anio.nombre}</span>
+                        <div class="year-actions">
+                            <button class="btn-secondary btn-inline" onclick="generarResumenAnio(${anio.id})">Generar resumen de año</button>
+                            <button class="btn-secondary btn-inline" onclick="abrirModalMes(${anio.id})">+ Agregar Mes</button>
+                            <button class="btn-danger" onclick="eliminarAnio(${anio.id})">Eliminar Registro</button>
+                        </div>
                     </div>
-
-                    <div class="summary-grid">
-                        <div class="summary-item">
-                            <label>Total Ingresos</label>
-                            <span class="positive">$${totalIngresos.toFixed(2)}</span>
-                        </div>
-                        <div class="summary-item">
-                            <label>Total Gastos</label>
-                            <span class="negative">$${totalGastos.toFixed(2)}</span>
-                        </div>
-                        <div class="summary-item">
-                            <label>Restante a Fin de Mes</label>
-                            <span class="${restante < 0 ? 'negative' : 'positive'}">$${restante.toFixed(2)}</span>
-                        </div>
-                    </div>
-
-                    <div class="sections-container">
-                        <!-- Sección Ingresos -->
-                        <div class="sub-section">
-                            <h4>Ingresos</h4>
-                            <div class="inline-form">
-                                <input type="text" id="ingresos-concepto-${mes.id}" class="input-concept" placeholder="Concepto">
-                                <input type="date" id="ingresos-fecha-${mes.id}" class="input-date">
-                                <input type="number" id="ingresos-monto-${mes.id}" class="input-amount" placeholder="Monto" step="0.01">
-                                <button onclick="agregarMovimiento(${mes.id}, 'ingresos')">+</button>
-                            </div>
-                            <div class="table-container">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Concepto</th>
-                                            <th>Fecha</th>
-                                            <th>Monto</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${mes.ingresos.length === 0 ? `<tr><td colspan="4" class="empty-state">Sin ingresos registrados</td></tr>` : 
-                                            mes.ingresos.map((item, idx) => `
-                                                <tr>
-                                                    <td>${item.concepto}</td>
-                                                    <td>${item.fecha}</td>
-                                                    <td>$${item.monto.toFixed(2)}</td>
-                                                    <td style="text-align: center;"><button class="btn-danger" style="padding:2px 5px; font-size:0.65rem;" onclick="eliminarMovimiento(${mes.id}, 'ingresos', ${idx})">X</button></td>
-                                                </tr>
-                                            `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Sección Gastos -->
-                        <div class="sub-section">
-                            <h4>Gastos</h4>
-                            <div class="inline-form">
-                                <input type="text" id="gastos-concepto-${mes.id}" class="input-concept" placeholder="Concepto">
-                                <input type="date" id="gastos-fecha-${mes.id}" class="input-date">
-                                <input type="number" id="gastos-monto-${mes.id}" class="input-amount" placeholder="Monto" step="0.01">
-                                <button onclick="agregarMovimiento(${mes.id}, 'gastos')">+</button>
-                            </div>
-                            <div class="table-container">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Concepto</th>
-                                            <th>Fecha</th>
-                                            <th>Monto</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${mes.gastos.length === 0 ? `<tr><td colspan="4" class="empty-state">Sin gastos registrados</td></tr>` : 
-                                            mes.gastos.map((item, idx) => `
-                                                <tr>
-                                                    <td>${item.concepto}</td>
-                                                    <td>${item.fecha}</td>
-                                                    <td>$${item.monto.toFixed(2)}</td>
-                                                    <td style="text-align: center;"><button class="btn-danger" style="padding:2px 5px; font-size:0.65rem;" onclick="eliminarMovimiento(${mes.id}, 'gastos', ${idx})">X</button></td>
-                                                </tr>
-                                            `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="months-list">
+                        ${mesesHTML}
                     </div>
                 `;
-                monthsContainer.appendChild(card);
+
+                yearsContainer.appendChild(yearCard);
             });
         }
     </script>

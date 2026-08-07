@@ -157,7 +157,6 @@
             gap: 10px;
         }
 
-        /* Cuando está minimizado, removemos el margen inferior del header para que la tarjeta sea compacta */
         .year-card.minimized .year-header {
             margin-bottom: 0;
             border-bottom: none;
@@ -176,8 +175,7 @@
             flex-wrap: wrap;
         }
 
-        /* Clase para ocultar los meses */
-        .months-list.hidden {
+        .months-list.hidden, .month-content.hidden {
             display: none;
         }
 
@@ -190,6 +188,10 @@
             margin-bottom: 20px;
         }
 
+        .month-card.minimized {
+            padding-bottom: 20px;
+        }
+
         .month-header {
             display: flex;
             justify-content: space-between;
@@ -197,6 +199,14 @@
             margin-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .month-card.minimized .month-header {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
         }
 
         .month-title {
@@ -204,6 +214,11 @@
             font-weight: 600;
             text-transform: capitalize;
             color: #ffffff;
+        }
+
+        .month-actions {
+            display: flex;
+            gap: 6px;
         }
 
         /* Resumen de Totales */
@@ -527,7 +542,7 @@
             anosData.push({
                 id: Date.now(),
                 nombre: nombreAnio,
-                minimizado: false, // Propiedad para controlar el estado colapsado
+                minimizado: false,
                 meses: []
             });
             guardarEnMemoria();
@@ -553,6 +568,7 @@
             anio.meses.push({
                 id: Date.now(),
                 nombre: nombreMes,
+                minimizado: false, // Propiedad agregada para minimizar el mes
                 ingresos: [],
                 gastos: []
             });
@@ -576,6 +592,18 @@
                 anio.minimizado = !anio.minimizado;
                 guardarEnMemoria();
                 renderizarApp();
+            }
+        }
+
+        function toggleMinimizarMes(idAnio, idMes) {
+            const anio = anosData.find(a => a.id === idAnio);
+            if (anio) {
+                const mes = anio.meses.find(m => m.id === idMes);
+                if (mes) {
+                    mes.minimizado = !mes.minimizado;
+                    guardarEnMemoria();
+                    renderizarApp();
+                }
             }
         }
 
@@ -655,7 +683,6 @@
 
             anosData.forEach(anio => {
                 const yearCard = document.createElement('div');
-                // Añadimos la clase 'minimized' condicionalmente
                 yearCard.className = `year-card ${anio.minimizado ? 'minimized' : ''}`;
 
                 let mesesHTML = '';
@@ -668,93 +695,98 @@
                         const restante = totalIngresos - totalGastos;
 
                         mesesHTML += `
-                            <div class="month-card">
+                            <div class="month-card ${mes.minimizado ? 'minimized' : ''}">
                                 <div class="month-header">
                                     <span class="month-title">${mes.nombre}</span>
-                                    <button class="btn-danger btn-compact" onclick="eliminarMes(${anio.id}, ${mes.id})">Eliminar Mes</button>
-                                </div>
-
-                                <div class="summary-grid">
-                                    <div class="summary-item">
-                                        <label>Ingresos</label>
-                                        <span class="positive">$${totalIngresos.toFixed(2)}</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <label>Gastos</label>
-                                        <span class="negative">$${totalGastos.toFixed(2)}</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <label>Restante Mes</label>
-                                        <span class="${restante < 0 ? 'negative' : 'positive'}">$${restante.toFixed(2)}</span>
+                                    <div class="month-actions">
+                                        <button class="btn-secondary btn-inline btn-compact" onclick="toggleMinimizarMes(${anio.id}, ${mes.id})">${mes.minimizado ? 'Expandir' : 'Minimizar'}</button>
+                                        <button class="btn-danger btn-compact" onclick="eliminarMes(${anio.id}, ${mes.id})">Eliminar Mes</button>
                                     </div>
                                 </div>
 
-                                <div class="sections-container">
-                                    <!-- Ingresos -->
-                                    <div class="sub-section">
-                                        <h4>Ingresos</h4>
-                                        <div class="inline-form">
-                                            <input type="text" id="ingresos-concepto-${mes.id}" class="input-concept" placeholder="Concepto">
-                                            <input type="date" id="ingresos-fecha-${mes.id}" class="input-date">
-                                            <input type="number" id="ingresos-monto-${mes.id}" class="input-amount" placeholder="Monto" step="0.01">
-                                            <button class="btn-inline" onclick="agregarMovimiento(${anio.id}, ${mes.id}, 'ingresos')">+</button>
+                                <div class="month-content ${mes.minimizado ? 'hidden' : ''}">
+                                    <div class="summary-grid">
+                                        <div class="summary-item">
+                                            <label>Ingresos</label>
+                                            <span class="positive">$${totalIngresos.toFixed(2)}</span>
                                         </div>
-                                        <div class="table-container">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Concepto</th>
-                                                        <th>Fecha</th>
-                                                        <th>Monto</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    ${mes.ingresos.length === 0 ? `<tr><td colspan="4" class="empty-state">Sin ingresos</td></tr>` : 
-                                                        mes.ingresos.map((item, idx) => `
-                                                            <tr>
-                                                                <td>${item.concepto}</td>
-                                                                <td>${item.fecha}</td>
-                                                                <td>$${item.monto.toFixed(2)}</td>
-                                                                <td style="text-align: center;"><button class="btn-danger" style="padding:2px 5px; font-size:0.65rem;" onclick="eliminarMovimiento(${anio.id}, ${mes.id}, 'ingresos', ${idx})">X</button></td>
-                                                            </tr>
-                                                        `).join('')}
-                                                </tbody>
-                                            </table>
+                                        <div class="summary-item">
+                                            <label>Gastos</label>
+                                            <span class="negative">$${totalGastos.toFixed(2)}</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <label>Restante Mes</label>
+                                            <span class="${restante < 0 ? 'negative' : 'positive'}">$${restante.toFixed(2)}</span>
                                         </div>
                                     </div>
 
-                                    <!-- Gastos -->
-                                    <div class="sub-section">
-                                        <h4>Gastos</h4>
-                                        <div class="inline-form">
-                                            <input type="text" id="gastos-concepto-${mes.id}" class="input-concept" placeholder="Concepto">
-                                            <input type="date" id="gastos-fecha-${mes.id}" class="input-date">
-                                            <input type="number" id="gastos-monto-${mes.id}" class="input-amount" placeholder="Monto" step="0.01">
-                                            <button class="btn-inline" onclick="agregarMovimiento(${anio.id}, ${mes.id}, 'gastos')">+</button>
+                                    <div class="sections-container">
+                                        <!-- Ingresos -->
+                                        <div class="sub-section">
+                                            <h4>Ingresos</h4>
+                                            <div class="inline-form">
+                                                <input type="text" id="ingresos-concepto-${mes.id}" class="input-concept" placeholder="Concepto">
+                                                <input type="date" id="ingresos-fecha-${mes.id}" class="input-date">
+                                                <input type="number" id="ingresos-monto-${mes.id}" class="input-amount" placeholder="Monto" step="0.01">
+                                                <button class="btn-inline" onclick="agregarMovimiento(${anio.id}, ${mes.id}, 'ingresos')">+</button>
+                                            </div>
+                                            <div class="table-container">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Concepto</th>
+                                                            <th>Fecha</th>
+                                                            <th>Monto</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${mes.ingresos.length === 0 ? `<tr><td colspan="4" class="empty-state">Sin ingresos</td></tr>` : 
+                                                            mes.ingresos.map((item, idx) => `
+                                                                <tr>
+                                                                    <td>${item.concepto}</td>
+                                                                    <td>${item.fecha}</td>
+                                                                    <td>$${item.monto.toFixed(2)}</td>
+                                                                    <td style="text-align: center;"><button class="btn-danger" style="padding:2px 5px; font-size:0.65rem;" onclick="eliminarMovimiento(${anio.id}, ${mes.id}, 'ingresos', ${idx})">X</button></td>
+                                                                </tr>
+                                                            `).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                        <div class="table-container">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Concepto</th>
-                                                        <th>Fecha</th>
-                                                        <th>Monto</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    ${mes.gastos.length === 0 ? `<tr><td colspan="4" class="empty-state">Sin gastos</td></tr>` : 
-                                                        mes.gastos.map((item, idx) => `
-                                                            <tr>
-                                                                <td>${item.concepto}</td>
-                                                                <td>${item.fecha}</td>
-                                                                <td>$${item.monto.toFixed(2)}</td>
-                                                                <td style="text-align: center;"><button class="btn-danger" style="padding:2px 5px; font-size:0.65rem;" onclick="eliminarMovimiento(${anio.id}, ${mes.id}, 'gastos', ${idx})">X</button></td>
-                                                            </tr>
-                                                        `).join('')}
-                                                </tbody>
-                                            </table>
+
+                                        <!-- Gastos -->
+                                        <div class="sub-section">
+                                            <h4>Gastos</h4>
+                                            <div class="inline-form">
+                                                <input type="text" id="gastos-concepto-${mes.id}" class="input-concept" placeholder="Concepto">
+                                                <input type="date" id="gastos-fecha-${mes.id}" class="input-date">
+                                                <input type="number" id="gastos-monto-${mes.id}" class="input-amount" placeholder="Monto" step="0.01">
+                                                <button class="btn-inline" onclick="agregarMovimiento(${anio.id}, ${mes.id}, 'gastos')">+</button>
+                                            </div>
+                                            <div class="table-container">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Concepto</th>
+                                                            <th>Fecha</th>
+                                                            <th>Monto</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${mes.gastos.length === 0 ? `<tr><td colspan="4" class="empty-state">Sin gastos</td></tr>` : 
+                                                            mes.gastos.map((item, idx) => `
+                                                                <tr>
+                                                                    <td>${item.concepto}</td>
+                                                                    <td>${item.fecha}</td>
+                                                                    <td>$${item.monto.toFixed(2)}</td>
+                                                                    <td style="text-align: center;"><button class="btn-danger" style="padding:2px 5px; font-size:0.65rem;" onclick="eliminarMovimiento(${anio.id}, ${mes.id}, 'gastos', ${idx})">X</button></td>
+                                                                </tr>
+                                                            `).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

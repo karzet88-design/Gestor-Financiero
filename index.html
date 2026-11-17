@@ -581,6 +581,105 @@
 
         .resumen-table tr.total-row td:first-child { text-transform: none; }
 
+        html, body { max-width: 100%; overflow-x: hidden; }
+
+        /* ---------- Ajustes para celular ---------- */
+        @media (max-width: 600px) {
+            body { padding: 14px 10px; }
+
+            /* Encabezado: botones lado a lado */
+            header { margin-bottom: 18px; padding-bottom: 14px; }
+            header h2 { font-size: 1.1rem; width: 100%; }
+            .header-actions { width: 100%; flex-wrap: nowrap; }
+            .header-actions button {
+                flex: 1;
+                width: auto;
+                padding: 10px 8px;
+                font-size: 0.8rem;
+            }
+
+            /* Tarjetas más compactas */
+            .year-card { padding: 14px; border-radius: 16px; margin-bottom: 18px; }
+            .year-title { font-size: 1.1rem; }
+            .year-header { margin-bottom: 14px; padding-bottom: 12px; }
+
+            /* Botones del año en cuadrícula ordenada de 2 columnas */
+            .year-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                width: 100%;
+            }
+            .year-actions button {
+                width: 100%;
+                padding: 9px 8px;
+                font-size: 0.78rem;
+            }
+            .year-actions .btn-wide { grid-column: 1 / -1; }
+
+            .month-card { padding: 12px; margin-bottom: 14px; border-radius: 14px; }
+            .month-header { margin-bottom: 12px; padding-bottom: 10px; }
+            .month-actions { width: 100%; gap: 6px; }
+            .month-actions button {
+                flex: 1;
+                width: auto;
+                padding: 8px 8px;
+                font-size: 0.75rem;
+            }
+
+            /* Resumen del mes en 3 columnas pequeñas */
+            .month-content .summary-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 6px;
+                padding: 10px;
+                margin-bottom: 14px;
+            }
+            .month-content .summary-item label { font-size: 0.6rem; letter-spacing: 0.3px; }
+            .month-content .summary-item span { font-size: 0.9rem; overflow-wrap: anywhere; }
+
+            .sections-container { gap: 18px; }
+
+            /* Formulario de ingreso/gasto: concepto arriba; fecha, monto y botón abajo */
+            .sub-section .inline-form {
+                display: grid;
+                grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto;
+                gap: 6px;
+            }
+            .sub-section .concept-wrap { grid-column: 1 / -1; }
+            .sub-section .inline-form input {
+                width: 100%;
+                min-width: 0;
+                height: 40px;
+                font-size: 16px; /* evita el zoom automático en iPhone */
+                padding: 8px 10px;
+            }
+            .sub-section .inline-form input[type="date"] {
+                -webkit-appearance: none;
+                appearance: none;
+            }
+            .sub-section .inline-form > button {
+                padding: 0 16px;
+                font-size: 1.1rem;
+            }
+
+            /* Tablas más compactas */
+            .table-container { overflow-x: auto; }
+            table { font-size: 0.75rem; }
+            th, td { padding: 7px 6px; }
+            th:nth-child(1), td:nth-child(1) { width: 33%; }
+            th:nth-child(2), td:nth-child(2) { width: 31%; white-space: nowrap; }
+            th:nth-child(3), td:nth-child(3) { width: 27%; white-space: nowrap; }
+            th:nth-child(4), td:nth-child(4) { width: 9%; }
+            .btn-x { padding: 2px 5px; font-size: 0.65rem; }
+
+            /* Ventanas */
+            .modal-overlay { padding: 12px; }
+            .modal { padding: 18px; border-radius: 18px; }
+            .modal input, .modal select { font-size: 16px; }
+            .resumen-table { font-size: 0.75rem; }
+            .resumen-table th, .resumen-table td { padding: 7px 6px; }
+        }
+
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: #262626; border-radius: 999px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -1340,7 +1439,7 @@
                         <div class="year-actions">
                             <button class="btn-secondary btn-inline btn-compact" onclick="toggleMinimizarAnio(${anio.id})">${anio.minimizado ? 'Expandir' : 'Minimizar'}</button>
                             <button class="btn-secondary btn-inline btn-compact" onclick="generarResumenAnio(${anio.id})">Resumen</button>
-                            <button class="btn-secondary btn-inline btn-compact" onclick="generarResumenMeses(${anio.id})">Resumen de todo los meses</button>
+                            <button class="btn-secondary btn-inline btn-compact btn-wide" onclick="generarResumenMeses(${anio.id})">Resumen de todo los meses</button>
                             <button class="btn-secondary btn-inline btn-compact" onclick="abrirModalMes(${anio.id})">+ Mes</button>
                             <button class="btn-danger btn-compact" onclick="eliminarAnio(${anio.id})">Eliminar</button>
                         </div>
